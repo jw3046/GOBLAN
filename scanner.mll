@@ -6,16 +6,16 @@ Let exp = ('e'|'E')('+'|'-')?[0-9]+
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf }     (* Whitespace *)
-  | "/*"                 { comment lexbuf }   (* Comments *)
-  | "//"                 { slcomment lexbuf } (* Single Line Comment *)
-  | '#'                  { slcomment lexbuf } (* Single Line Comment *)
-  | '('                  { LPAREN }
-  | ')'                  { RPAREN }
-  | '{'                  { LBRACE }
-  | '}'                  { RBRACE }
-  | '['                  { LBRACKET }
-  | ']'                  { RBRACKET }
-  | '"'                  { string lexbuf }    (* String *)
+| "/*"                 { comment lexbuf }   (* Comments *)
+| "//"                 { slcomment lexbuf } (* Single Line Comment *)
+| '#'                  { slcomment lexbuf } (* Single Line Comment *)
+| '('                  { LPAREN }
+| ')'                  { RPAREN }
+| '{'                  { LBRACE }
+| '}'                  { RBRACE }
+| '['                  { LBRACKET }
+| ']'                  { RBRACKET }
+| '"'                  { string lexbuf }    (* String *)
 | ';'                  { SEMI }
 | ','                  { COMMA }
 | '.'                  { PERIOD }
@@ -100,4 +100,3 @@ and string = parse
   "\\\"" { string lexbuf } (* Double quote escape sequence: \" *)
 | '"'    { token lexbuf }
 | _      { string lexbuf }
-
