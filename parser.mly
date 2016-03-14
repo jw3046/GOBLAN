@@ -2,9 +2,10 @@
 
 %{
 open Ast;
-let get1 (a,_,_) = a;
-let get2 (_,a,_) = a;
-let get3 (_,_,a) = a;
+let get1 (a,_,_,_) = a;
+let get2 (_,a,_,_) = a;
+let get3 (_,_,a,_) = a;
+let get4 (_,_,_,a) = a;
 %}
 
 %token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
@@ -15,7 +16,8 @@ let get3 (_,_,a) = a;
 %token STRING LIST TUPLE NODE GRAPH VOID TRUE FALSE
 %token DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
 %token PASS TO ADD RUN NULL DELETE FROM INFINITY
-%token <int> LITERAL
+%token <int> INT_LIT
+%token <float> FLT_LIT
 %token <string> ID
 %token EOF
 
@@ -41,9 +43,10 @@ program:
 
 decls:
    /* nothing */ { [], [], [] }
- | decls vdecl { ($2 :: get1 $1), get2 $1, get3 $1 }
- | decls fdecl { get1 $1, ($2 :: get2 $1), get3 $1 }
- | decls ndecl { get1 $1, get2 $1, ($2 :: get3 $1) }
+ | decls vdecl { ($2 :: get1 $1), get2 $1, get3 $1, get4 $1 }
+ | decls fdecl { get1 $1, ($2 :: get2 $1), get3 $1, get4 $1 }
+ | decls ndecl { get1 $1, get2 $1, ($2 :: get3 $1), get4 $1 }
+ | decls ndecl { get1 $1, get2 $1, get3 $1, ($2 :: get4 $1) }
 
 ndecl:
    NODE ID LBRACE n_data n_do n_catch RBRACE
@@ -67,6 +70,8 @@ n_catch:
      { { locals = $4;
         body = $5 } }
 
+t_decl:
+  TUPLE_TYP LBRACE vdecl_list RBRACE {{ attributes = List.rev $3 }}
 
 fdecl:
    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
@@ -91,9 +96,10 @@ typ:
   | CHAR     { Char}
   | STRING   { Str }
   | FLOAT    { Float }
-  | ID GRAPH { Graph }
   | typ LIST { List }
   | ID       { Tuple }
+  | NODE_TYP { Node }
+  | TUPLE_TYP { Tuple }
 
 vdecl_list:
     /* nothing */    { [] }
@@ -106,31 +112,21 @@ stmt_list:
     /* nothing */  { [] }
   | stmt_list stmt { $2 :: $1 }
 
-stmt_block:
-    LBRACE stmt_list RBRACE { List.rev $2 }
-
-stmt_brace:
-    LBRACE stmt RBRACE { Block ($2) }
-
 stmt:
     expr SEMI { Expr $1 }
   | RETURN SEMI { Return Noexpr }
   | RETURN expr SEMI { Return $2 }
-  | stmt_block { Block($1) }
-  | LBRACE stmt_list RBRACE { Block(List.rev $2) }
-  | IF LPAREN expr RPAREN stmt_brace %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt_brace ELSE stmt_brace   { If($3, $5, $7) }
-  | IF LPAREN expr RPAREN stmt_brace ELIF stmt_brace ELSE stmt_brace { If ($3, $5, $7, $9) }
-  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt_brace { For($3, $5, $7, $9) }
-  | FOR LPAREN expr IN expr RPAREN stmt_brace { For($3, $5, $7)}
-  | WHILE LPAREN expr RPAREN stmt_brace { While($3, $5) }
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE %prec NOELSE { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE { If($3, $5, $7) }
+  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt_list RBRACE { For($3, $5, $7, $9) }
+  | FOR LPAREN expr IN expr RPAREN LBRACE stmt_list RBRACE { For($3, $5, $7)}
+  | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE { While($3, $5) }
   | BREAK SEMI { Break }
   | CONTINUE SEMI { Continue }
   | SEMI { Empty }
-  | PASS expr ARROW ID SEMI { Pass($2, $4) }
-  | RUN expr LPAREN expr RPAREN { Run ($2, $4) }
-  | expr COMMA expr { Comma ($1, $3) }
-  
+  | PASS expr ARROW epxr SEMI { Pass($2, $4) }
+  | RUN ID LPAREN formal_list RPAREN { Run ($2,$4) }
+  | expr COMMA expr { Sequence ($1, $3
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -166,7 +162,7 @@ expr:
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
   | NULL { Null }
-  | INFINITY { Infinity }
+  | INFINITY { Inf }
   
 
 actuals_opt:
