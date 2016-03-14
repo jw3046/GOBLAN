@@ -79,7 +79,7 @@ rule token = parse
 | "run"                { RUN }
 | "null"               { NULL }
 | "from"               { FROM }
-| "infinity"           { INFINITY }
+| "inf"           { INFINITY }
 | ('.'[0-9]+ exp?|[0-9]+('.'[0-9]* exp? | exp)) as float_lxm { LITERAL(float_of_string float_lxm) }
 | ['0'-'9']+ as lxm    { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
