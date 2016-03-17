@@ -1,3 +1,9 @@
+/*
+TODO
+Add the "." rule
+Unused token: ELIF
+*/
+
 /* Ocamlyacc parser for GOBLAN */
 
 %{
@@ -40,66 +46,65 @@ let get4 (_,_,_,a) = a;
 %%
 
 program:
-  decls EOF { $1 }
+  decls EOF                            { $1 }
 
 decls:
-   /* nothing */ { [], [], [] }
- | decls vdecl { ($2 :: get1 $1), get2 $1, get3 $1, get4 $1 }
- | decls tdecl { get1 $1, ($2 :: get2 $1), get3 $1, get4 $1 }
- | decls ndecl { get1 $1, get2 $1, ($2 :: get3 $1), get4 $1 }
- | decls fdecl { get1 $1, get2 $1, get3 $1, ($2 :: get4 $1) }
+   /* nothing */                       { [], [], [] }
+ | decls vdecl                         { ($2 :: get1 $1), get2 $1, get3 $1, get4 $1 }
+ | decls tdecl                         { get1 $1, ($2 :: get2 $1), get3 $1, get4 $1 }
+ | decls ndecl                         { get1 $1, get2 $1, ($2 :: get3 $1), get4 $1 }
+ | decls fdecl                         { get1 $1, get2 $1, get3 $1, ($2 :: get4 $1) }
 
 vdecl:
     typ ID SEMI { ($1, $2) }
 
 vdecl_list:
-    /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
+    /* nothing */                      { [] }
+  | vdecl_list vdecl                   { $2 :: $1 }
 
 typ:
-    INT            { Int }
-  | BOOL           { Bool }
-  | VOID           { Void }
-  | CHAR           { Char }
-  | STRING         { Str }
-  | FLOAT          { Float }
-  | NODE_TYP       { NodeTyp($1) }
-  | NODE_TYP GRAPH { GraphTyp($1) }
-  | typ LIST       { ListTyp($1) }
-  | TUPLE_TYP      { TupleTyp($1) }
+    INT                                { Int }
+  | BOOL                               { Bool }
+  | VOID                               { Void }
+  | CHAR                               { Char }
+  | STRING                             { Str }
+  | FLOAT                              { Float }
+  | NODE_TYP                           { NodeTyp($1) }
+  | NODE_TYP GRAPH                     { GraphTyp($1) }
+  | typ LIST                           { ListTyp($1) }
+  | TUPLE_TYP                          { TupleTyp($1) }
 
 ndecl:
    NODE ID LBRACE n_data n_do n_catch RBRACE
-     { { n_data = $4;
-        n_do = $5;
-        n_catch = $6 } }
+                                       { { n_data = $4;
+                                           n_do = $5;
+                                           n_catch = $6 } }
 
 n_data:
-   DATA LBRACE vdecl_list RBRACE
-     { { attributes = List.rev $3} }
+   DATA LBRACE vdecl_list RBRACE       { { attributes = List.rev $3} }
 
 n_do:
    typ DO LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { typ = $1;
-        formals = $4;
-        locals = List.rev $7;
-        body = List.rev $8 } }
+                                       { { typ = $1;
+                                           formals = $4;
+                                           locals = List.rev $7;
+                                           body = List.rev $8 } }
 
 n_catch:
    CATCH LBRACE vdecl_list stmt_list RBRACE
-     { { locals = $3;
-        body = $4 } }
+                                       { { locals = $3;
+                                           body = $4 } }
 
 tdecl:
     TUPLE_TYP LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
 
 fdecl:
    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { typ = $1;
-   fname = $2;
-   formals = $4;
-   locals = List.rev $7;
-   body = List.rev $8 } }
+                                       { { typ = $1;
+                                           fname = $2;
+                                           formals = $4;
+                                           locals = List.rev $7;
+                                           body = List.rev $8 } }
 
 formals_opt:
     /* nothing */                      { [] }
@@ -110,7 +115,7 @@ formal_list:
   | formal_list COMMA typ ID           { ($3,$4) :: $1 }
 
 stmt_list:
-    /* nothing */  { [] }
+    /* nothing */                      { [] }
   | stmt_list stmt                     { $2 :: $1 }
 
 stmt:
@@ -131,13 +136,14 @@ stmt:
   | CONTINUE SEMI                      { Continue }
   | SEMI                               { Empty }
   | PASS expr ARROW expr SEMI          { Pass($2, $4) }
-  | RUN ID LPAREN formal_list RPAREN SEMI   { Run ($2,$4) }
-  | ADD expr TO expr SEMI                   { ListAdd($2, $4) }
-  | REMOVE expr FROM expr SEMI              { ListRemove($2, $4) }
+  | RUN ID LPAREN formal_list RPAREN SEMI
+                                       { Run ($2,$4) }
+  | ADD expr TO expr SEMI              { ListAdd($2, $4) }
+  | REMOVE expr FROM expr SEMI         { ListRemove($2, $4) }
   
 expr_opt:
-    /* nothing */ { Noexpr }
-  | expr          { $1 }
+    /* nothing */                      { Noexpr }
+  | expr                               { $1 }
 
 expr:
     expr PERIOD expr                   { Member($1, $3) }
@@ -149,33 +155,39 @@ expr:
   | PARENT                             { Parent }
   | CHILD                              { Child }
   | NEIGHBORS                          { Neighbors }
-  | expr PLUS    expr                  { Binop($1, Add,   $3) }
-  | expr MINUS   expr                  { Binop($1, Sub,   $3) }
-  | expr TIMES   expr                  { Binop($1, Mult,  $3) }
-  | expr DIVIDE  expr                  { Binop($1, Div,   $3) }
-  | expr MODULO  expr                  { Binop($1, Mod,   $3) }
-  | expr FPLUS   expr                  { Binop($1, FAdd,  $3) }
+  | FLT_LIT                            { FloatLit($1) }
+  | INT_LIT                            { IntLit($1) }
+  | STR_LIT                            { StrLit($1) }
+  | CHR_LIT                            { ChrLit($1) }
+  | expr PLUS    expr                  { Binop($1, Add, $3) }
+  | expr MINUS   expr                  { Binop($1, Sub, $3) }
+  | expr TIMES   expr                  { Binop($1, Mult, $3) }
+  | expr DIVIDE  expr                  { Binop($1, Div, $3) }
+  | expr MODULO  expr                  { Binop($1, Mod, $3) }
+  | expr FPLUS   expr                  { Binop($1, FAdd, $3) }
   | expr FMINUS  expr                  { Binop($1, FMinus, $3) }
   | expr FTIMES  expr                  { Binop($1, FTimes, $3) }
   | expr FDIVIDE expr                  { Binop($1, FDivide, $3) }
   | expr EQ      expr                  { Binop($1, Equal, $3) }
-  | expr NEQ     expr                  { Binop($1, NEqual,   $3) }
-  | expr REQ     expr                  { Binop($1, RefEqual,   $3) }
-  | expr RNEQ    expr                  { Binop($1, RefNEqual,  $3) }
-  | expr LT      expr                  { Binop($1, Less,  $3) }
-  | expr LEQ     expr                  { Binop($1, Leq,   $3) }
+  | expr NEQ     expr                  { Binop($1, NEqual, $3) }
+  | expr REQ     expr                  { Binop($1, RefEqual, $3) }
+  | expr RNEQ    expr                  { Binop($1, RefNEqual, $3) }
+  | expr LT      expr                  { Binop($1, Less, $3) }
+  | expr LEQ     expr                  { Binop($1, Leq, $3) }
   | expr GT      expr                  { Binop($1, Greater, $3) }
-  | expr GEQ     expr                  { Binop($1, Geq,   $3) }
-  | expr AND     expr                  { Binop($1, And,   $3) }
-  | expr OR      expr                  { Binop($1, Or,    $3) }
+  | expr GEQ     expr                  { Binop($1, Geq, $3) }
+  | expr AND     expr                  { Binop($1, And, $3) }
+  | expr OR      expr                  { Binop($1, Or, $3) }
   | MINUS expr %prec NEG               { Unop(Neg, $2) }
   | NOT expr                           { Unop(Not, $2) }
   | ID ASSIGN expr                     { Assign($1, $3) }
-  | NEW TUPLE_TYP LPAREN stmt RPAREN       { Tuple($2, $4) }
-  | NEW NODE_TYP LPAREN actuals_opt RPAREN { Node($2, $4) }
+  | NEW TUPLE_TYP LPAREN stmt RPAREN   { Tuple($2, $4) }
+  | NEW NODE_TYP LPAREN actuals_opt RPAREN
+                                       { Node($2, $4) }
   | GRAPH LBRACE expr COMMA expr RBRACE
                                        { Graph($3, $5) }
-  | NEW typ LBRACKET actuals_opt RBRACKET  { Lst($2, $4) }
+  | NEW typ LBRACKET actuals_opt RBRACKET
+                                       { Lst($2, $4) }
   | ID LPAREN actuals_opt RPAREN       { Call($1, $3) }
   | LPAREN expr RPAREN                 { $2 }
   | NULL                               { Null }
@@ -183,7 +195,7 @@ expr:
   
 
 actuals_opt:
-    /* nothing */ { [] }
+    /* nothing */                      { [] }
   | actuals_list                       { List.rev $1 }
 
 actuals_list:
