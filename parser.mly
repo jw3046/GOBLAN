@@ -13,7 +13,7 @@ let get3 (_,_,a,_) = a;
 let get4 (_,_,_,a) = a;
 %}
 
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET NREQ
+%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET
 %token SEMI COMMA PERIOD PLUS MINUS TIMES DIVIDE MODULO ARROW
 %token FPLUS FMINUS FTIMES FDIVIDE ASSIGN EQ NEQ REQ RNEQ
 %token LT LEQ GT GEQ AND OR NOT IF ELIF ELSE FOR IN WHILE
@@ -159,7 +159,7 @@ expr:
   | expr EQ     expr  { Binop($1, Equal, $3) }
   | expr NEQ    expr  { Binop($1, NEqual,   $3) }
   | expr REQ    expr  { Binop($1, RefEqual,   $3) }
-  | expr NREQ   expr  { Binop($1, NRefEqual,  $3) }
+  | expr RNEQ   expr  { Binop($1, NRefEqual,  $3) }
   | expr LT     expr  { Binop($1, Less,  $3) }
   | expr LEQ    expr  { Binop($1, Leq,   $3) }
   | expr GT     expr  { Binop($1, Greater, $3) }
