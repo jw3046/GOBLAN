@@ -19,11 +19,13 @@ let get4 (_,_,_,a) = a;
 %token LT LEQ GT GEQ AND OR NOT IF ELIF ELSE FOR IN WHILE
 %token BREAK CONTINUE FUNCTION RETURN BOOL INT FLOAT CHAR
 %token STRING LIST TUPLE TUPLE_TYP NODE GRAPH VOID TRUE FALSE
-%token DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE NODE_TYP 
+%token DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
 %token PASS ADD TO DELETE FROM RUN NULL INFINITY LITERAL
 %token <int> INT_LIT
 %token <float> FLT_LT
 %token <string> ID
+%token <string> NODE_TYP
+%token <string> TUPLE_TYP
 %token EOF
 
 %nonassoc NOELSE
@@ -61,7 +63,7 @@ ndecl:
 
 n_data:
    DATA LBRACE vdecl_list RBRACE
-     { { attributes = List.rev $2} }
+     { { attributes = List.rev $3} }
 
 n_do:
    typ DO LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
@@ -121,11 +123,11 @@ stmt:
     expr SEMI { Expr $1 }
   | RETURN SEMI { Return Noexpr }
   | RETURN expr SEMI { Return $2 }
-  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE { If($3, $5, $7) }
-  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt_list RBRACE { For($3, $5, $7, $9) }
-  | FOR LPAREN expr IN expr RPAREN LBRACE stmt_list RBRACE { For($3, $5, $7)}
-  | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE { While($3, $5) }
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE %prec NOELSE { If($3, $6, Block([])) }
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE { If($3, $6, $10) }
+  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt_list RBRACE { For($3, $5, $7, $10) }
+  | FOR LPAREN expr IN expr RPAREN LBRACE stmt_list RBRACE { For($3, $5, $8)}
+  | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE { While($3, $6) }
   | BREAK SEMI { Break }
   | CONTINUE SEMI { Continue }
   | SEMI { Empty }
@@ -139,7 +141,7 @@ expr_opt:
   | expr          { $1 }
 
 expr:
-    LITERAL           { Literal($1) }
+    LITERAL           { Literal }
   | TRUE              { BoolLit(true) }
   | FALSE             { BoolLit(false) }
   | SELF              { Self }
@@ -169,9 +171,9 @@ expr:
   | ID ASSIGN expr       { Assign($1, $3) }
   | TUPLE_TYP LPAREN stmt RPAREN        { Tuple($1, $3) }
   | NODE_TYP LPAREN actuals_opt RPAREN  { Node($1, $3) }
-  | GRAPH LBRACE expr COMMA expr RBRACE { Graph($2, $4) }
+  | GRAPH LBRACE expr COMMA expr RBRACE { Graph($3, $5) }
   | typ LBRACKET actuals_opt RBRACKET   { Lst($1, $3) }
-  | ID LPAREN actuals_opt RPAREN        { Call($1, $3) }
+  | ID LPAREN actuals_opt RPAREN        { Call($1. $3) }
   | LPAREN expr RPAREN { $2 }
   | NULL { Null }
   | INFINITY { Infinity }
