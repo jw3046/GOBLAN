@@ -18,7 +18,7 @@ let get4 (_,_,_,a) = a;
 %token PLUS MINUS TIMES DIVIDE MODULO FPLUS FMINUS FTIMES FDIVIDE
 %token ASSIGN EQ NEQ REQ RNEQ LT LEQ GT GEQ AND OR NOT ARROW
 %token IF ELSE FOR IN WHILE BREAK CONTINUE RETURN
-%token BOOL INT FLOAT CHAR STRING LIST GRAPH NEW VOID
+%token BOOL INT FLOAT CHAR STRING LIST TUPLE GRAPH NEW VOID
 %token TRUE FALSE DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
 %token PASS ADD TO REMOVE FROM RUN NULL INFINITY
 %token <string> ID
@@ -94,7 +94,7 @@ n_catch:
                                            body = $4 } }
 
 tdecl:
-    TUPLE_TYP LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
+    TUPLE LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
 
 fdecl:
    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
@@ -179,12 +179,11 @@ expr:
   | MINUS expr %prec NEG               { Unop(Neg, $2) }
   | NOT expr                           { Unop(Not, $2) }
   | ID ASSIGN expr                     { Assign($1, $3) }
-  | NEW TUPLE_TYP LPAREN actuals_opt RPAREN   
-                                       { Tuple($2, $4) }
+  | NEW TUPLE_TYP LPAREN stmt RPAREN   { Tuple($2, $4) }
   | NEW NODE_TYP LPAREN actuals_opt RPAREN
                                        { Node($2, $4) }
-  | GRAPH LBRACE expr COMMA expr RBRACE
-                                       { Graph($3, $5) }
+  | NEW NODE_TYP GRAPH LBRACE expr COMMA expr RBRACE
+                                       { Graph($2, $5, $7) }
   | NEW typ LBRACKET actuals_opt RBRACKET
                                        { Lst($2, $4) }
   | ID LPAREN actuals_opt RPAREN       { Call($1, $3) }
