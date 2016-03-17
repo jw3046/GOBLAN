@@ -1,9 +1,3 @@
-/*
-TODO
-Add the “.” rule
-Unused token: ELIF
-*/
-
 /* Ocamlyacc parser for GOBLAN */
 
 %{
@@ -17,7 +11,7 @@ let get4 (_,_,_,a) = a;
 %token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET SEMI COMMA PERIOD
 %token PLUS MINUS TIMES DIVIDE MODULO FPLUS FMINUS FTIMES FDIVIDE
 %token ASSIGN EQ NEQ REQ RNEQ LT LEQ GT GEQ AND OR NOT ARROW
-%token IF ELIF ELSE FOR IN WHILE BREAK CONTINUE RETURN
+%token IF ELSE FOR IN WHILE BREAK CONTINUE RETURN
 %token BOOL INT FLOAT CHAR STRING LIST TUPLE NODE GRAPH NEW VOID
 %token TRUE FALSE DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
 %token PASS ADD TO REMOVE FROM RUN NULL INFINITY
@@ -195,8 +189,3 @@ actuals_opt:
 actuals_list:
     expr                               { [$1] }
   | actuals_list COMMA expr            { $3 :: $1 }
-
-
-
-
-
