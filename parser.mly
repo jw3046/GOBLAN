@@ -177,11 +177,11 @@ expr:
   | MINUS expr %prec NEG               { Unop(Neg, $2) }
   | NOT expr                           { Unop(Not, $2) }
   | ID ASSIGN expr                     { Assign($1, $3) }
-  | TUPLE_TYP LPAREN stmt RPAREN       { Tuple($1, $3) }
-  | NODE_TYP LPAREN actuals_opt RPAREN { Node($1, $3) }
+  | NEW TUPLE_TYP LPAREN stmt RPAREN       { Tuple($2, $4) }
+  | NEW NODE_TYP LPAREN actuals_opt RPAREN { Node($2, $4) }
   | GRAPH LBRACE expr COMMA expr RBRACE
                                        { Graph($3, $5) }
-  | typ LBRACKET actuals_opt RBRACKET  { Lst($1, $3) }
+  | NEW typ LBRACKET actuals_opt RBRACKET  { Lst($2, $4) }
   | ID LPAREN actuals_opt RPAREN       { Call($1, $3) }
   | LPAREN expr RPAREN                 { $2 }
   | NULL                               { Null }
