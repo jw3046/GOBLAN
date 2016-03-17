@@ -1,0 +1,8 @@
+# First, ignore yourself.
+#.gitignore
+
+# Customized START HERE
+
+*.log
+
+# Customized END HERE
