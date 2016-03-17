@@ -144,49 +144,81 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | Pass (e1, e2) -> "Pass (" ^ string_of_tuple e1 ^ ") " ^ string_of_list e12
   | Run (e1, e2) -> "Run " ^ string_of_expr e1 ^ " ( " ^ string_of_list e2 ^ " ) "
-  
-let string_of_n_data n_data = function
-  "{\n" ^ String.concat ";\n" (Lisp.map string_of_attributes attributes) ";}\n"
-  (******)
-
-let string_of_n_do n_do = function
-  "{\n" ^  String.concat ";\n" (List.map string_of_typ typ) ^ String.concat  "\n" 
-  (****)
-
-let string_of_n_catch var = function
- (****)
-
-let string_of_node_decl node_decl = function
-  (*****)
-let string_of_func_decl func_decl = function
-  (*****)
-  
-let string_of_typ = function
-    Int -> "int"
-  | Bool -> "bool"
-  | Void -> "void"
-  | Char -> "char"
-  | Str -> "string”
-  | Float -> "float”
-  | Graph -> "graph"
-  | List -> "list"
-  | Tuple -> "tuple"
-  | ID -> "id"
-  | _ -> "unknown_typ" { raise (Failure  " [ERROR] Illegal string_of_typ " )}
-
-let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
-
-let string_of_fdecl fdecl =
-  string_of_typ fdecl.typ ^ " " ^
-  fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
-
-let string_of_ndecl ///////////////placeholder??
 
 let string_of_program (vars, funcs, nodes) =
   String.concat ""   (List.map string_of_vdecl vars)  ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs) ^ "\n" ^
   String.concat "\n" (List.map string_of_ndecl nodes)
+
+(* New *)
+let string_of_v_decl (v_decl_typ, v_decl_id) = 
+  string_of_typ v_decl_typ ^ " " ^ v_decl_id
+
+(* New *)
+let string_of_t_decl   t_decl =
+  string_of_attributes t_decl.attributes
+
+(* New *)
+let string_of_n_decl n_decl = 
+  string_of_n_data   n_decl.n_data ^
+  string_of_n_do     n_decl.n_do ^
+  string_of_n_catch  n_decl.n_catch
+
+(* New *)
+let string_of_f_decl f_decl =
+  "{\n{\n" ^
+  string_of_typ      f_decl.typ ^ "},\n{\n" ^
+  string_of_fname    f_decl.fname ^ "},\n{\n" ^
+  String.concat ";\n" (List.map string_of_formals  f_decl.formals) ^ "},\n{\n" ^
+  String.concat ";\n" (List.map string_of_locals   f_decl.locals) ^ "},\n{\n" ^
+  String.concat ";\n" (List.map string_of_body     f_decl.body) ^ "}\n}\n"
+
+(* Undefined *)
+let string_of_attributes attributes
+
+(* New *)
+let string_of_n_data n_data =  
+  "{\n" ^
+  String.concat ";\n" (List.map string_of_attributes n_data.attributes) ^
+  ";\n}\n"
+
+(* New *)
+let string_of_n_do n_do =
+  "{\n{\n" ^
+  String.concat ";\n" (List.map string_of_typ n_do.typ) ^ ";\n},\n{\n" ^
+  String.concat ";\n" (List.map string_of_formals n_do.formals) ^ ";\n},\n{\n" ^
+  String.concat ";\n" (List.map string_of_body n_do.body) ^ ";\n}\n}\n"
+
+(* New *)
+let string_of_n_catch n_catch =
+ "{\n{\n" ^
+ String.concat ";\n" (List.map string_of_locals n_catch.locals) ^ ";\n},\n{\n" ^
+ String.concat ";\n" (List.map string_of_body n_catch.body) ^ ";\n}\n}\n"
+
+(* Undefined *)
+let string_of_typ typ
+
+(* Undefined *)
+let string_of_fname fname
+
+(* Undefined *)
+let string_of_formals formals
+
+(* Undefined *)
+let string_of_locals locals
+
+(* Undefined *)
+let string_of_body body
+
+let string_of_typ = function
+    Int -> "int"
+  | Bool -> "bool"
+  | Void -> "void"
+  | Char -> "char"
+  | Str -> "string"
+  | Float -> "float"
+  | Graph -> "graph"
+  | List -> "list"
+  | Tuple -> "tuple"
+  | ID -> "id"
+  | _ -> "unknown_typ" { raise (Failure  " [ERROR] Illegal string_of_typ " )}
