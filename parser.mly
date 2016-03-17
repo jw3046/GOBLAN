@@ -18,7 +18,7 @@ let get4 (_,_,_,a) = a;
 %token FPLUS FMINUS FTIMES FDIVIDE ASSIGN EQ NEQ REQ RNEQ
 %token LT LEQ GT GEQ AND OR NOT IF ELIF ELSE FOR IN WHILE
 %token BREAK CONTINUE FUNCTION RETURN BOOL INT FLOAT CHAR
-%token STRING LIST TUPLE NODE GRAPH VOID TRUE FALSE
+%token STRING LIST TUPLE TUPLE_TYP NODE GRAPH VOID TRUE FALSE
 %token DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
 %token PASS ADD TO DELETE FROM RUN NULL INFINITY
 %token <int> INT_LIT
@@ -61,7 +61,7 @@ ndecl:
 
 n_data:
    DATA LBRACE vdecl_list RBRACE
-     { { attributes = List.rev $7} }
+     { { attributes = List.rev $2} }
 
 n_do:
    typ DO LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
@@ -129,7 +129,7 @@ stmt:
   | BREAK SEMI { Break }
   | CONTINUE SEMI { Continue }
   | SEMI { Empty }
-  | PASS expr ARROW epxr SEMI { Pass($2, $4) }
+  | PASS expr ARROW expr SEMI { Pass($2, $4) }
   | RUN ID LPAREN formal_list RPAREN { Run ($2,$4) }
   | expr COMMA expr { Sequence ($1, $3) }
   
