@@ -96,7 +96,7 @@ n_catch:
                                            body = $4 } }
 
 tdecl:
-    TUPLE_TYP LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
+    TUPLE LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
 
 fdecl:
    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
