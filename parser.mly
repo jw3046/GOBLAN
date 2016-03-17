@@ -182,7 +182,7 @@ expr:
   | NEW TUPLE_TYP LPAREN stmt RPAREN   { Tuple($2, $4) }
   | NEW NODE_TYP LPAREN actuals_opt RPAREN
                                        { Node($2, $4) }
-  | NEW NODE_TYP GRAPH LBRACE expr COMMA expr RBRACE
+  | NEW NODE_TYP GRAPH LPAREN expr COMMA expr RPAREN
                                        { Graph($2, $5, $7) }
   | NEW typ LBRACKET actuals_opt RBRACKET
                                        { Lst($2, $4) }
