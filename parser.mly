@@ -140,7 +140,6 @@ stmt:
   | RUN ID LPAREN formal_list RPAREN SEMI   { Run ($2,$4) }
   | ADD expr TO expr SEMI                   { ListAdd($2, $4) }
   | REMOVE expr FROM expr SEMI              { ListRemove($2, $4) }
-  | expr COMMA expr SEMI                    { Sequence ($1, $3) }
   
 expr_opt:
     /* nothing */ { Noexpr }
