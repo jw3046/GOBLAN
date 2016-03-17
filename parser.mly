@@ -1,9 +1,3 @@
-/*
-TODO
-Add the "." rule
-Unused token: ELIF
-*/
-
 /* Ocamlyacc parser for GOBLAN */
 
 %{
@@ -179,7 +173,8 @@ expr:
   | MINUS expr %prec NEG               { Unop(Neg, $2) }
   | NOT expr                           { Unop(Not, $2) }
   | ID ASSIGN expr                     { Assign($1, $3) }
-  | NEW TUPLE_TYP LPAREN actuals_opt RPAREN   { Tuple($2, $4) }
+  | NEW TUPLE_TYP LPAREN actuals_opt RPAREN
+                                       { Tuple($2, $4) }
   | NEW NODE_TYP LPAREN actuals_opt RPAREN
                                        { Node($2, $4) }
   | NEW NODE_TYP GRAPH LPAREN expr COMMA expr RPAREN
