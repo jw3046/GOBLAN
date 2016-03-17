@@ -48,7 +48,6 @@ rule token = parse
 | "while"                              { WHILE }
 | "break"                              { BREAK }
 | "continue"                           { CONTINUE }
-| "fun"                                { FUNCTION }
 | "return"                             { RETURN }
 | "bool"                               { BOOL }
 | "int"                                { INT }
@@ -57,9 +56,9 @@ rule token = parse
 | "string"                             { STRING }
 | "list"                               { LIST }
 | "tuple"                              { TUPLE }
-| "new"                                { NEW }
 | "node"                               { NODE }
 | "graph"                              { GRAPH }
+| "new"                                { NEW }
 | "void"                               { VOID }
 | "true"                               { TRUE }
 | "false"                              { FALSE }
@@ -74,32 +73,32 @@ rule token = parse
 | "pass"                               { PASS }
 | "add"                                { ADD }
 | "to"                                 { TO }
-| "delete"                             { DELETE }
+| "remove"                             { REMOVE }
 | "from"                               { FROM }
 | "run"                                { RUN }
 | "null"                               { NULL }
 | "infinity"                           { INFINITY }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
+                                       { ID(lxm) }
 | ('.'[0-9]+ exp?|[0-9]+('.'[0-9]* exp? | exp)) as lxm
                                        { FLT_LIT(float_of_string lxm) }
 | ['0'-'9']+ as lxm                    { INT_LIT(int_of_string lxm) }
-| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
-                                       { ID(lxm) }
+| '"'[_|"\\\""]*'"'                    { let string = Lexing.lexeme lexbuf in
+                                         STR_LIT(String.sub string 1 (
+                                         (String.length string) - 2))
+                                       }
+| "'"[(' ' - '&')|('(' - '~')]"'"      { let char = Lexing.lexeme lexbuf in
+                                         CHR_LIT(String.sub char 1 (
+                                         (String.length char) - 2))
+                                       }
+| "'\\"['n' 'r' 't']"'"                { let char = Lexing.lexeme lexbuf in
+                                         CHR_LIT(String.sub char 1 (
+                                         (String.length char) - 2))
+                                       }
 | "node:"['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
                                        { NODE_TYP(lxm) }
 | "tuple:"['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
                                        { TUPLE_TYP(lxm) }
-| '"'[_|"\\\""]*'"'                    { let string = Lexing.lexeme lexbuf in
-                                         STRING(String.sub string 1 (
-                                         (String.length string) - 2))
-                                       }
-| "'"[(' ' - '&')|('(' - '~')]"'"      { let char = Lexing.lexeme lexbuf in
-                                         CHARACTER(String.sub char 1 (
-                                         (String.length char) - 2))
-                                       }
-| "'\\"['n' 'r' 't']"'"                { let char = Lexing.lexeme lexbuf in
-                                         CHARACTER(String.sub char 1 (
-                                         (String.length char) - 2))
-                                       }
 | eof                                  { EOF }
 | _ as char                            { raise (Failure("illegal character " ^
                                          Char.escaped char))
