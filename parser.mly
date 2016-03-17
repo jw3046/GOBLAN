@@ -23,6 +23,7 @@ let get4 (_,_,_,a) = a;
 %token EOF
 
 %right ASSIGN
+%left TO FROM
 %left OR
 %left AND
 %left EQ NEQ REQ RNEQ
