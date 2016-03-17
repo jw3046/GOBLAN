@@ -73,10 +73,10 @@ typ:
   | TUPLE_TYP                          { TupleTyp($1) }
 
 ndecl:
-   NODE ID LBRACE n_data n_do n_catch RBRACE
-                                       { { n_data = $4;
-                                           n_do = $5;
-                                           n_catch = $6 } }
+   NODE_TYP LBRACE n_data n_do n_catch RBRACE
+                                       { { n_data = $3;
+                                           n_do = $4;
+                                           n_catch = $5 } }
 
 n_data:
    DATA LBRACE vdecl_list RBRACE       { { attributes = List.rev $3} }
