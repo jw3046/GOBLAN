@@ -16,19 +16,31 @@ type typ =
 type bind = typ * string
 
 type expr =
-    Literal of int
+    Member of expr * expr
+  | IntLit of int
   | BoolLit of bool
+  | StrLit of string
+  | FloatLit of float
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of string * expr
   | Tuple of typ * expr list
   | Node of typ * expr list
-  | Graph of expr * expr
+  | Graph of typ * expr * expr
   | Lst of typ * expr list
   | Call of string * expr list
-  | Noexpr
+  | Run of string * bind list
+  | ListAdd of expr * expr
+  | ListRemove of expr * expr
+  | Neighbors
+  | Parent
+  | Child
+  | Self
+  | Mssage
   | Null
+  | Infinity
+  | Noexpr
 
 type stmt =
     Block of stmt list
@@ -36,12 +48,11 @@ type stmt =
   | Return of expr
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
-  | For of expr * expr * stmt
+  | ForEach of expr * expr * stmt
   | While of expr * stmt
   | Break
   | Continue
   | Pass of expr * expr
-  | Run of string * bind list
 
 type tuple_decl = {
     attributes : expr list;

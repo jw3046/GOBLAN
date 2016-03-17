@@ -112,6 +112,7 @@ stmt_list:
 
 stmt:
     expr SEMI                          { Expr $1 }
+  | LBRACE stmt_list RBRACE            { Block(List.rev $2) }
   | RETURN SEMI                        { Return Noexpr }
   | RETURN expr SEMI                   { Return $2 }
   | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE
@@ -121,17 +122,12 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt_list RBRACE
                                        { For($3, $5, $7, $10) }
   | FOR LPAREN expr IN expr RPAREN LBRACE stmt_list RBRACE
-                                       { For($3, $5, $8)}
+                                       { ForEach($3, $5, $8)}
   | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE
                                        { While($3, $6) }
   | BREAK SEMI                         { Break }
   | CONTINUE SEMI                      { Continue }
-  | SEMI                               { Empty }
   | PASS expr ARROW expr SEMI          { Pass($2, $4) }
-  | RUN ID LPAREN formal_list RPAREN SEMI
-                                       { Run ($2,$4) }
-  | ADD expr TO expr SEMI              { ListAdd($2, $4) }
-  | REMOVE expr FROM expr SEMI         { ListRemove($2, $4) }
   
 expr_opt:
     /* nothing */                      { Noexpr }
@@ -181,6 +177,10 @@ expr:
                                        { Graph($2, $5, $7) }
   | NEW typ LBRACKET actuals_opt RBRACKET
                                        { Lst($2, $4) }
+  | RUN ID LPAREN actuals_opt RPAREN SEMI
+                                       { Run ($2,$4) }
+  | ADD expr TO expr SEMI              { ListAdd($2, $4) }
+  | REMOVE expr FROM expr SEMI         { ListRemove($2, $4) }
   | ID LPAREN actuals_opt RPAREN       { Call($1, $3) }
   | LPAREN expr RPAREN                 { $2 }
   | NULL                               { Null }
