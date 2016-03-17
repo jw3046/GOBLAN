@@ -63,8 +63,8 @@ typ:
   | STRING                             { Str }
   | FLOAT                              { Float }
   | NODE_TYP                           { NodeTyp($1) }
-  | NODE_TYP GRAPH                     { GraphTyp($1) }
-  | typ LIST                           { ListTyp($1) }
+  | GRAPH NODE_TYP                     { GraphTyp($2) }
+  | LIST typ                           { ListTyp($2) }
   | TUPLE_TYP                          { TupleTyp($1) }
 
 ndecl:
