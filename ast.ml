@@ -150,63 +150,59 @@ let string_of_program (vars, funcs, nodes) =
   String.concat "\n" (List.map string_of_fdecl funcs) ^ "\n" ^
   String.concat "\n" (List.map string_of_ndecl nodes)
 
-(* New *)
 let string_of_v_decl (v_decl_typ, v_decl_id) = 
   string_of_typ v_decl_typ ^ " " ^ v_decl_id
 
-(* New *)
 let string_of_t_decl   t_decl =
   string_of_attributes t_decl.attributes
 
-(* New *)
+(* ? *)
 let string_of_n_decl n_decl = 
   string_of_n_data   n_decl.n_data ^
   string_of_n_do     n_decl.n_do ^
   string_of_n_catch  n_decl.n_catch
 
-(* New *)
+(* ? *)
 let string_of_f_decl f_decl =
   "{\n{\n" ^
   string_of_typ      f_decl.typ ^ "},\n{\n" ^
-  string_of_fname    f_decl.fname ^ "},\n{\n" ^
+  String.concat ";\n" (List.map string_of_fname    f_decl.fname) ^ "},\n{\n" ^
   String.concat ";\n" (List.map string_of_formals  f_decl.formals) ^ "},\n{\n" ^
   String.concat ";\n" (List.map string_of_locals   f_decl.locals) ^ "},\n{\n" ^
   String.concat ";\n" (List.map string_of_body     f_decl.body) ^ "}\n}\n"
 
-(* Undefined *)
-let string_of_attributes attributes
+let string_of_attributes (attr_typ, attr_id) =
+  string_of_typ attr_typ ^ " " ^ attr_id
 
-(* New *)
 let string_of_n_data n_data =  
   "{\n" ^
-  String.concat ";\n" (List.map string_of_attributes n_data.attributes) ^
-  ";\n}\n"
+  String.concat ";\n" (List.map string_of_attributes n_data.attributes) ^ ";\n}\n"
 
-(* New *)
+(* ? *)
 let string_of_n_do n_do =
   "{\n{\n" ^
   String.concat ";\n" (List.map string_of_typ n_do.typ) ^ ";\n},\n{\n" ^
   String.concat ";\n" (List.map string_of_formals n_do.formals) ^ ";\n},\n{\n" ^
   String.concat ";\n" (List.map string_of_body n_do.body) ^ ";\n}\n}\n"
 
-(* New *)
+(* ? *)
 let string_of_n_catch n_catch =
  "{\n{\n" ^
  String.concat ";\n" (List.map string_of_locals n_catch.locals) ^ ";\n},\n{\n" ^
  String.concat ";\n" (List.map string_of_body n_catch.body) ^ ";\n}\n}\n"
 
 let string_of_typ = function
-    Int -> "int"
-  | Bool -> "bool"
-  | Void -> "void"
-  | Char -> "char"
-  | Str -> "string"
+    Int   -> "int"
+  | Bool  -> "bool"
+  | Void  -> "void"
+  | Char  -> "char"
+  | Str   -> "string"
   | Float -> "float"
   | Graph -> "graph"
-  | List -> "list"
+  | List  -> "list"
   | Tuple -> "tuple"
-  | ID -> "id"
-  | _ -> "unknown_typ" { raise (Failure  " [ERROR] Illegal string_of_typ " )}
+  | ID    -> "id"
+  | _     -> "unknown_typ" { raise (Failure  " [ERROR] Illegal string_of_typ " )}
 
 (* Undefined *)
 let string_of_fname fname
