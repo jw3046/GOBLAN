@@ -195,21 +195,6 @@ let string_of_n_catch n_catch =
  String.concat ";\n" (List.map string_of_locals n_catch.locals) ^ ";\n},\n{\n" ^
  String.concat ";\n" (List.map string_of_body n_catch.body) ^ ";\n}\n}\n"
 
-(* Undefined *)
-let string_of_typ typ
-
-(* Undefined *)
-let string_of_fname fname
-
-(* Undefined *)
-let string_of_formals formals
-
-(* Undefined *)
-let string_of_locals locals
-
-(* Undefined *)
-let string_of_body body
-
 let string_of_typ = function
     Int -> "int"
   | Bool -> "bool"
@@ -222,3 +207,15 @@ let string_of_typ = function
   | Tuple -> "tuple"
   | ID -> "id"
   | _ -> "unknown_typ" { raise (Failure  " [ERROR] Illegal string_of_typ " )}
+
+(* Undefined *)
+let string_of_fname fname
+
+(* Undefined *)
+let string_of_formals formals
+
+(* Undefined *)
+let string_of_locals locals
+
+(* Undefined *)
+let string_of_body body
