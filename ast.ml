@@ -22,8 +22,8 @@ type expr =
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of string * expr
-  | Tuple of TupleTyp * expr list
-  | Node of NodeTyp * expr list
+  | Tuple of typ * expr list
+  | Node of typ * expr list
   | Graph of expr * expr
   | Lst of typ * expr list
   | Call of string * expr list
@@ -40,8 +40,8 @@ type stmt =
   | While of expr * stmt
   | Break
   | Continue
-  | Pass expr * expr
-  | Run string * bind list
+  | Pass of expr * expr
+  | Run of string * bind list
 
 type tuple_decl = {
     attributes : expr list;
@@ -97,16 +97,10 @@ let string_of_op = function
   | And -> "&&"
   | Or -> "||"
   | Mod -> "%"
-  | _ -> "unknown_op" { raise (Failure  " [ERROR] Illegal string_of_op " )}
-
-
 
 let string_of_uop = function
     Neg -> "-"
   | Not -> "!"
-  | _ -> "unknown_uop" { raise (Failure  " [ERROR] Illegal string_of_uop " )}
-
-
 
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
@@ -135,11 +129,10 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
-  | For (e1, e2, s) -> "for (" ^string_of_expr e1 ^ in string_of_expr e2 ^ ") " ^ string_of_stmt s
+  | For (e1, e2, s) -> "for (" ^ string_of_expr e1 ^ string_of_expr e2 ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | Pass (e1, e2) -> "Pass (" ^ string_of_tuple e1 ^ ") " ^ string_of_list e12
   | Run (e1, e2) -> "Run " ^ string_of_expr e1 ^ " ( " ^ string_of_list e2 ^ " ) "
-  | _ -> "unknown_stmt" { raise (Failure  " [ERROR] Illegal string_of_stmt " )}
   
 let string_of_n_data n_data = function
   "{\n" ^ String.concat ";\n" (Lisp.map string_of_attributes attributes) ";}\n"
