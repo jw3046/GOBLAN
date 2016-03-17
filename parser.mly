@@ -18,7 +18,7 @@ let get4 (_,_,_,a) = a;
 %token PLUS MINUS TIMES DIVIDE MODULO FPLUS FMINUS FTIMES FDIVIDE
 %token ASSIGN EQ NEQ REQ RNEQ LT LEQ GT GEQ AND OR NOT ARROW
 %token IF ELSE FOR IN WHILE BREAK CONTINUE RETURN
-%token BOOL INT FLOAT CHAR STRING LIST TUPLE GRAPH NEW VOID
+%token BOOL INT FLOAT CHAR STRING LIST GRAPH NEW VOID
 %token TRUE FALSE DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
 %token PASS ADD TO REMOVE FROM RUN NULL INFINITY
 %token <string> ID
@@ -94,7 +94,7 @@ n_catch:
                                            body = $4 } }
 
 tdecl:
-    TUPLE LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
+    TUPLE_TYP LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
 
 fdecl:
    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
