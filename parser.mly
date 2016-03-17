@@ -93,8 +93,8 @@ n_do:
 
 n_catch:
    CATCH LBRACE vdecl_list stmt_list RBRACE
-     { { locals = $4;
-        body = $5 } }
+     { { locals = $3;
+        body = $4 } }
 
 tdecl:
     TUPLE_TYP LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
@@ -153,9 +153,9 @@ expr:
   | SELF                               { Self }
   | MESSAGE                            { Message }
   | ID                                 { Id($1) }
-  | PARENT                             { Parent($1) }
-  | CHILD                              { Child($1) }
-  | NEIGHBORS                          { Neighbors($1) }
+  | PARENT                             { Parent }
+  | CHILD                              { Child }
+  | NEIGHBORS                          { Neighbors }
   | expr PLUS    expr                  { Binop($1, Add,   $3) }
   | expr MINUS   expr                  { Binop($1, Sub,   $3) }
   | expr TIMES   expr                  { Binop($1, Mult,  $3) }
