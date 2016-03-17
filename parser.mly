@@ -28,8 +28,6 @@ let get4 (_,_,_,a) = a;
 %token <string> NODE_TYP TUPLE_TYP
 %token EOF
 
-%nonassoc NOELSE
-%nonassoc ELSE
 %right ASSIGN
 %left OR
 %left AND
@@ -122,7 +120,7 @@ stmt:
     expr SEMI                          { Expr $1 }
   | RETURN SEMI                        { Return Noexpr }
   | RETURN expr SEMI                   { Return $2 }
-  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE %prec NOELSE
+  | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE
                                        { If($3, $6, Block([])) }
   | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE
                                        { If($3, $6, $10) }
