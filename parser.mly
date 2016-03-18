@@ -178,8 +178,8 @@ expr:
                                        { Graph($2, $5, $7) }
   | NEW typ LBRACKET actuals_opt RBRACKET
                                        { Lst($2, $4) }
-  | RUN expr LPAREN actuals_opt RPAREN 
-                                       { Run ($2,$4) }
+  | RUN LBRACE expr RBRACE LPAREN actuals_opt RPAREN 
+                                       { Run ($3,$6) }
   | ADD expr TO expr                   { ListAdd($2, $4) }
   | REMOVE expr FROM expr              { ListRemove($2, $4) }
   | ID LPAREN actuals_opt RPAREN       { Call($1, $3) }
