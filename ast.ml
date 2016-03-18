@@ -127,7 +127,6 @@ let rec string_of_expr = function
   | Null -> "Null"
   | Noexpr -> ""
 
-
 let rec string_of_stmt = function
     Block(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
@@ -146,9 +145,10 @@ let rec string_of_stmt = function
   | Run (e1, e2) -> "Run " ^ string_of_expr e1 ^ " ( " ^ string_of_list e2 ^ " ) "
 
 let string_of_program (vars, funcs, nodes) =
-  String.concat ""   (List.map string_of_vdecl vars)  ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs) ^ "\n" ^
-  String.concat "\n" (List.map string_of_ndecl nodes)
+  "{\n" ^
+  String.concat "\n" (List.map string_of_vdecl vars)  ^ "\n}\n{" ^
+  String.concat "\n" (List.map string_of_fdecl funcs) ^ "\n}\n{" ^
+  String.concat "\n" (List.map string_of_ndecl nodes) ^ "\n}"
 
 let string_of_v_decl (v_decl_typ, v_decl_id) = 
   string_of_typ v_decl_typ ^ " " ^ v_decl_id
@@ -156,27 +156,45 @@ let string_of_v_decl (v_decl_typ, v_decl_id) =
 let string_of_t_decl   t_decl =
   string_of_attributes t_decl.attributes
 
-(* ? *)
-let string_of_n_decl n_decl = 
-  string_of_n_data   n_decl.n_data ^
-  string_of_n_do     n_decl.n_do ^
-  string_of_n_catch  n_decl.n_catch
+let string_of_n_decl nodes =
+  "\t{\n" ^
+  (string_of_n_data nodes.n_data) ^ "\n" ^
+  "\t}\n" ^
+  "\t{\n" ^
+  (string_of_n_do nodes.n_do) ^ "\n" ^
+  "\t}\n" ^
+  "\t{\n" ^
+  (string_of_n_catch nodes.n_catch) ^ "\n" ^
+  "\t}"
 
-(* ? *)
+let string_of_n_data n_data = 
+  "\t\t[\n" ^
+  "\t\t\t" ^ String.concat ",\n\t\t\t" (List.map string_of_v_decl n_data) ^ "\n" ^
+  "\t\t]"
+
+let string_of_n_do n_do = 
+  "\t\t[\n" ^
+  "\t\t\t" ^ string_of_typ n_do.typ ^ "(" ^
+    String.concat "," (List.map string_of_v_decl n_do.formals) ^ ")" ^ "\n" ^
+  "\t\t\t" ^ string_of_
+  "\t\t]" ^
+
+
+
 let string_of_f_decl f_decl =
-  "{\n{\n" ^
-  string_of_typ      f_decl.typ ^ "},\n{\n" ^
-  String.concat ";\n" (List.map string_of_fname    f_decl.fname) ^ "},\n{\n" ^
-  String.concat ";\n" (List.map string_of_formals  f_decl.formals) ^ "},\n{\n" ^
-  String.concat ";\n" (List.map string_of_locals   f_decl.locals) ^ "},\n{\n" ^
-  String.concat ";\n" (List.map string_of_body     f_decl.body) ^ "}\n}\n"
+  "{{\n" ^
+  string_of_typ f_decl.typ ^ "},\n{\n" ^
+  f_decl.fname ^ "},\n{\n" ^
+  String.concat ","   (List.map string_of_formals  f_decl.formals) ^ "},\n{\n" ^
+  String.concat ","   (List.map string_of_locals   f_decl.locals) ^ "},\n{\n" ^
+  String.concat ";\n" (List.map string_of_body     f_decl.body) ^ "}\n}"
 
 let string_of_attributes (attr_typ, attr_id) =
   string_of_typ attr_typ ^ " " ^ attr_id
 
 let string_of_n_data n_data =  
   "{\n" ^
-  String.concat ";\n" (List.map string_of_attributes n_data.attributes) ^ ";\n}\n"
+  String.concat ";\n" (List.map string_of_attributes n_data.attributes) ^ ";\n}"
 
 (* ? *)
 let string_of_n_do n_do =
