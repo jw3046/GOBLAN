@@ -176,8 +176,8 @@ expr:
                                        { Node($2, $4) }
   | NEW NODE_TYP GRAPH LPAREN expr COMMA expr RPAREN
                                        { Graph($2, $5, $7) }
-  | typ LBRACKET actuals_opt RBRACKET
-                                       { Lst($1, $3) }
+  | NEW typ LBRACKET actuals_opt RBRACKET
+                                       { Lst($2, $4) }
   | RUN ID LPAREN actuals_opt RPAREN 
                                        { Run ($2,$4) }
   | ADD expr TO expr                   { ListAdd($2, $4) }
