@@ -24,7 +24,7 @@ type expr =
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
-  | Assign of string * expr
+  | Assign of expr * expr
   | Tuple of typ * expr list
   | Node of typ * expr list
   | Graph of typ * expr * expr

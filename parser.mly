@@ -23,7 +23,7 @@ let get4 (_,_,_,a) = a;
 %token EOF
 
 %right ASSIGN
-%left TO FROM
+%right TO FROM
 %left OR
 %left AND
 %left EQ NEQ REQ RNEQ
@@ -169,7 +169,7 @@ expr:
   | expr OR      expr                  { Binop($1, Or, $3) }
   | MINUS expr %prec NEG               { Unop(Neg, $2) }
   | NOT          expr                  { Unop(Not, $2) }
-  | ID ASSIGN    expr                  { Assign($1, $3) }
+  | expr ASSIGN  expr                  { Assign($1, $3) }
   | NEW TUPLE_TYP LPAREN actuals_opt RPAREN
                                        { Tuple($2, $4) }
   | NEW NODE_TYP LPAREN actuals_opt RPAREN
@@ -178,7 +178,7 @@ expr:
                                        { Graph($2, $5, $7) }
   | NEW typ LBRACKET actuals_opt RBRACKET
                                        { Lst($2, $4) }
-  | RUN ID LPAREN actuals_opt RPAREN 
+  | RUN expr LPAREN actuals_opt RPAREN 
                                        { Run ($2,$4) }
   | ADD expr TO expr                   { ListAdd($2, $4) }
   | REMOVE expr FROM expr              { ListRemove($2, $4) }
