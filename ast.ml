@@ -30,7 +30,7 @@ type expr =
   | Graph of typ * expr * expr
   | Lst of typ * expr list
   | Call of string * expr list
-  | Run of string * bind list
+  | Run of expr * bind list
   | ListAdd of expr * expr
   | ListRemove of expr * expr
   | Neighbors
