@@ -1,0 +1,15 @@
+# First, ignore yourself.
+#.gitignore
+
+# Customization starts here
+*.log
+*.output
+*.ml
+*.mli
+doc/*.log
+doc/*.pdf
+doc/*.aux
+doc/*.toc
+#doc/*.tex
+# Customization ends here
+
