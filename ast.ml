@@ -56,6 +56,7 @@ type stmt =
   | Pass of expr * expr
 
 type tuple_decl = {
+    typ : typ;
     attributes : expr list;
   }
 
@@ -95,15 +96,15 @@ type program = bind list * tuple_decl list * node_decl list * func_decl list
 (* Pretty-printing functions *)
 
 let string_of_typ = function
-    Int   -> "int"
-  | Bool  -> "bool"
-  | Void  -> "void"
-  | Char  -> "char"
-  | Str   -> "string"
-  | Float -> "float"
-  | NodeTyp(name) -> "node"
+    Int            -> "int"
+  | Bool           -> "bool"
+  | Void           -> "void"
+  | Char           -> "char"
+  | Str            -> "string"
+  | Float          -> "float"
+  | NodeTyp(name)  -> "node"
   | GraphTyp(name) -> "graph"
-  | ListTyp(name) -> "list"
+  | ListTyp(name)  -> "list"
   | TupleTyp(name) -> "tuple"
 
 let string_of_op = function
@@ -227,7 +228,7 @@ let string_of_f_decl f_decl =
 let string_of_data ndata =
   String.concat "\n" (List.map string_of_v_decl ndata.attributes)
 
-let string_of_do ndo =
+let string_of_do (ndo : n_do) =
   string_of_typ ndo.typ ^ "\n" ^
   string_of_formals ndo.formals ^ "\n" ^
   string_of_locals ndo.locals ^ "\n" ^
@@ -240,7 +241,7 @@ let string_of_do ndo =
   String.concat "\n" (List.map string_of_v_decl ndo.locals) ^ "\n" ^
   String.concat "\n" (List.map string_of_stmt ndo.body)
 *)
-let string_of_catch ncatch =
+let string_of_catch (ncatch : n_catch) =
   string_of_locals ncatch.locals ^ "\n" ^
   string_of_body ncatch.body
 
@@ -253,12 +254,14 @@ let string_of_n_decl n_decl =
   string_of_catch n_decl.n_catch ^ "\n" ^
   "}"
 
-let string_of_tdecl t_decl =
-  string_of_typ t_decl.typ ^ " " ^ 
-  String.concat "\n" (List.map string_of_vdecl t_decl.attributes)
+let string_of_attributes attr =
+  String.concat "\n" (List.map string_of_expr attr)
+
+let string_of_t_decl (t_decl : tuple_decl) =
+  string_of_typ t_decl.typ ^ " " ^ string_of_attributes t_decl.attributes
 
 let string_of_program (vars, funcs, nodes, tuples) =
-  String.concat "\n" (List.map string_of_vdecl vars)  ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs) ^ "\n" ^
-  String.concat "\n" (List.map string_of_ndecl nodes) ^ "\n" ^
-  String.concat "\n" (List.map string_of_tdecl tuples)
+  String.concat "\n" (List.map string_of_v_decl vars)  ^ "\n" ^
+  String.concat "\n" (List.map string_of_f_decl funcs) ^ "\n" ^
+  String.concat "\n" (List.map string_of_n_decl nodes) ^ "\n" ^
+  String.concat "\n" (List.map string_of_t_decl tuples)
