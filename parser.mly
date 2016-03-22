@@ -42,7 +42,7 @@ program:
   decls EOF                            { $1 }
 
 decls:
-   /* nothing */                       { [], [], [] }
+   /* nothing */                       { [], [], [], [] }
  | decls vdecl                         { ($2 :: get1 $1), get2 $1, get3 $1, get4 $1 }
  | decls tdecl                         { get1 $1, ($2 :: get2 $1), get3 $1, get4 $1 }
  | decls ndecl                         { get1 $1, get2 $1, ($2 :: get3 $1), get4 $1 }
