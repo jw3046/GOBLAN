@@ -47,7 +47,7 @@ type stmt =
   | Expr of expr
   | ReturnNoExpr
   | Return of expr
-  | If of expr * stmt * stmt
+  | If of expr * stmt list * stmt
   | For of expr * expr * expr * stmt
   | ForEach of expr * expr * stmt
   | While of expr * stmt
@@ -56,8 +56,8 @@ type stmt =
   | Pass of expr * expr
 
 type tuple_decl = {
-    typ : typ;
-    attributes : expr list;
+    typ : string;
+    attributes : bind list;
   }
 
 type n_data = {
@@ -77,7 +77,7 @@ type n_catch = {
   }
 
 type node_decl = {
-    n_typ  : typ;
+    n_typ  : string;
     n_data : n_data;
     n_do : n_do;
     n_catch : n_catch;
@@ -246,7 +246,7 @@ let string_of_catch (ncatch : n_catch) =
   string_of_body ncatch.body
 
 let string_of_n_decl n_decl =
-  string_of_typ n_decl.n_typ ^ " {\n" ^
+  n_decl.n_typ ^ " {\n" ^
   string_of_data n_decl.n_data ^ "\n" ^
   "}{\n" ^
   string_of_do n_decl.n_do ^ "\n" ^
@@ -255,10 +255,10 @@ let string_of_n_decl n_decl =
   "}"
 
 let string_of_attributes attr =
-  String.concat "\n" (List.map string_of_expr attr)
+  String.concat "\n" (List.map string_of_bind_list attr)
 
 let string_of_t_decl (t_decl : tuple_decl) =
-  string_of_typ t_decl.typ ^ " " ^ string_of_attributes t_decl.attributes
+  t_decl.typ ^ " " ^ string_of_attributes t_decl.attributes
 
 let string_of_program (vars, funcs, nodes, tuples) =
   String.concat "\n" (List.map string_of_v_decl vars)  ^ "\n" ^
