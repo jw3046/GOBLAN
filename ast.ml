@@ -99,10 +99,10 @@ let string_of_typ = function
   | Char  -> "char"
   | Str   -> "string"
   | Float -> "float"
-  | Graph -> "graph"
-  | List  -> "list"
-  | Tuple -> "tuple"
-  | ID    -> "id"
+  | NodeTyp(name) -> "node"
+  | GraphTyp(name) -> "graph"
+  | ListTyp(name) -> "list"
+  | TupleTyp(name) -> "tuple"
 
 let string_of_op = function
     Add       -> "+"
