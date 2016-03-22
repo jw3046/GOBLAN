@@ -16,7 +16,7 @@ type typ =
 type bind = typ * string
 
 type expr =
-    Member of expr * expr
+    Member of expr * string
   | IntLit of int
   | BoolLit of bool
   | StrLit of string
@@ -45,6 +45,7 @@ type expr =
 type stmt =
     Block of stmt list
   | Expr of expr
+  | ReturnNoExpr
   | Return of expr
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
@@ -75,6 +76,7 @@ type n_catch = {
   }
 
 type node_decl = {
+    n_typ  : typ;
     n_data : n_data;
     n_do : n_do;
     n_catch : n_catch;
@@ -109,6 +111,10 @@ let string_of_op = function
   | Sub       -> "-"
   | Mult      -> "*"
   | Div       -> "/"
+  | FAdd      -> "+."
+  | FSub      -> "-."
+  | FMult     -> "*."
+  | FDiv      -> "/."
   | Equal     -> "=="
   | NEqual    -> "!="
   | RefEqual  -> "==="
@@ -125,48 +131,80 @@ let string_of_uop = function
     Neg -> "-"
   | Not -> "!"
 
+let string_of_bind_list (typ, id) =
+  string_of_typ typ ^ " " ^ id
+
 let rec string_of_expr = function
-    Literal(l) -> string_of_int l
+  | Member(e, id) -> string_of_expr e ^ "." ^ id
+  | IntLit(i) -> string_of_int i
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
+  | StrLit(s) -> s
+  | FloatLit(f) -> string_of_float f
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
-  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Assign(e1, e2) -> string_of_expr e1 ^ " = " ^ string_of_expr e2
+  | Tuple(typ, el) -> string_of_typ typ ^ " " ^
+      String.concat "\n" (List.map string_of_expr el)
+  | Node(typ, el) -> string_of_typ typ ^ " " ^
+      String.concat "\n" (List.map string_of_expr el)
+  | Graph(typ, e1, e2) -> string_of_typ typ ^ "\n" ^ string_of_expr e1 ^ "\n" ^
+      string_of_expr e2
+  | Lst(typ, el) -> string_of_typ typ ^ " " ^
+      String.concat "\n" (List.map string_of_expr el)
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | Null -> "Null"
+  | Run(e, bl) -> string_of_expr e ^ " " ^ String.concat "\n" (List.map string_of_bind_list bl)
+  | ListAdd(e1, e2) -> string_of_expr e1 ^ " " ^ string_of_expr e2
+  | ListRemove(e1, e2) -> string_of_expr e1 ^ " " ^ string_of_expr e2
+  | Neighbors -> "neighbors"
+  | Parent -> "parent"
+  | Child -> "child"
+  | Self -> "self"
+  | Mssage -> "message"
+  | Null -> "null"
+  | Infinity -> "infinity"
   | Noexpr -> ""
 
 let rec string_of_stmt = function
-    Block(stmts)
+    Expr(e)
+      -> string_of_expr e ^ ";\n"
+  | Block(stmts)
       -> "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
-  | Expr(expr)
-      -> string_of_expr expr ^ ";\n"
+  | ReturnNoExpr
+      -> "return;"
   | Return(expr)
       -> "return " ^ string_of_expr expr ^ ";\n"
   | If(e, s, Block([]))
       -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
   | If(e, s1, s2)
-      -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1
+      -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^
          "else\n" ^ string_of_stmt s2
+  (*
   | If(e1, e2, s1, s2, s3)
       -> "if (" ^ string_of_expr e1 ^ ")\n" ^ string_of_stmt s1 ^
          "elif (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s2 ^
          "else\n" ^ string_of_stmt s3
+  *)
   | For(e1, e2, e3, s)
       -> "for (" ^ string_of_expr e1  ^ "; " ^ string_of_expr e2 ^ "; " ^
          string_of_expr e3  ^ ")\n" ^ string_of_stmt s
-  | For (e1, e2, s)
-      -> "for (" ^ string_of_expr e1 ^ string_of_expr e2 ^ ")\n" ^
+  | ForEach(e1, e2, s)
+      -> "for (" ^ string_of_expr e1 ^ " " ^ string_of_expr e2 ^ ")\n" ^
          string_of_stmt s
   | While(e, s)
       -> "while (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
+  | Break
+      -> "break;"
+  | Continue
+      -> "continue;"
   | Pass (e1, e2)
-      -> "Pass (" ^ string_of_tuple e1 ^ ")\n" ^ string_of_list e2
+      -> "Pass (" ^ string_of_expr e1 ^ ")\n" ^ string_of_expr e2
+  (*
   | Run (e1, e2)
-      -> "Run " ^ string_of_expr e1 ^ " ( " ^ string_of_list e2 ^ " ) "
+      -> "Run " ^ string_of_expr e1 ^ " ( " ^ string_of_list e2 ^ " ) "*)
  
 let string_of_v_decl (v_decl_typ, v_decl_id) = 
   string_of_typ v_decl_typ ^ " " ^ v_decl_id
@@ -175,7 +213,7 @@ let string_of_formals formals =
   String.concat "\n" (List.map string_of_v_decl formals)
 
 let string_of_locals locals = 
-  Strng.concat "\n" (List.map string_of_v_decl locals)
+  String.concat "\n" (List.map string_of_v_decl locals)
 
 let string_of_body body =
   String.concat "\n" (List.map string_of_stmt body)
@@ -190,11 +228,18 @@ let string_of_data ndata =
   String.concat "\n" (List.map string_of_v_decl ndata.attributes)
 
 let string_of_do ndo =
-  string_of_typ n_do.typ ^ "\n" ^
-  string_of_formals n_do.formals ^ "\n" ^
-  string_of_locals n_do.locals ^ "\n" ^
-  string_of_body n_do.body
+  string_of_typ ndo.typ ^ "\n" ^
+  string_of_formals ndo.formals ^ "\n" ^
+  string_of_locals ndo.locals ^ "\n" ^
+  string_of_body ndo.body
 
+(*
+let string_of_do ndo =
+  string_of_typ ndo.typ ^ "\n" ^
+  String.concat "\n" (List.map string_of_v_decl ndo.formals) ^ "\n" ^
+  String.concat "\n" (List.map string_of_v_decl ndo.locals) ^ "\n" ^
+  String.concat "\n" (List.map string_of_stmt ndo.body)
+*)
 let string_of_catch ncatch =
   string_of_locals ncatch.locals ^ "\n" ^
   string_of_body ncatch.body
@@ -212,7 +257,6 @@ let string_of_tdecl t_decl =
   string_of_typ t_decl.typ ^ " " ^ 
   String.concat "\n" (List.map string_of_vdecl t_decl.attributes)
 
-(* tuples ?*)
 let string_of_program (vars, funcs, nodes, tuples) =
   String.concat "\n" (List.map string_of_vdecl vars)  ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs) ^ "\n" ^
