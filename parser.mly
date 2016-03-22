@@ -69,7 +69,7 @@ typ:
 
 ndecl:
    NODE_TYP LBRACE n_data n_do n_catch RBRACE
-                                       { { n_typ = $1
+                                       { { n_typ = $1;
                                            n_data = $3;
                                            n_do = $4;
                                            n_catch = $5 } }
@@ -90,7 +90,8 @@ n_catch:
                                            body = $4 } }
 
 tdecl:
-    TUPLE_TYP LBRACE vdecl_list RBRACE { { attributes = List.rev $3 } }
+    TUPLE_TYP LBRACE vdecl_list RBRACE { { typ = $1;
+                                           attributes = List.rev $3 } }
 
 fdecl:
    typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
