@@ -69,7 +69,8 @@ typ:
 
 ndecl:
    NODE_TYP LBRACE n_data n_do n_catch RBRACE
-                                       { { n_data = $3;
+                                       { { typ = $1
+                                           n_data = $3;
                                            n_do = $4;
                                            n_catch = $5 } }
 
