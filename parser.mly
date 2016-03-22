@@ -1,11 +1,11 @@
 /* Ocamlyacc parser for GOBLAN */
 
 %{
-open Ast;
-let get1 (a,_,_,_) = a;
-let get2 (_,a,_,_) = a;
-let get3 (_,_,a,_) = a;
-let get4 (_,_,_,a) = a;
+open Ast;;
+let get1 (a,_,_,_) = a;;
+let get2 (_,a,_,_) = a;;
+let get3 (_,_,a,_) = a;;
+let get4 (_,_,_,a) = a;;
 %}
 
 %token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET SEMI COMMA PERIOD

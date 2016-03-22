@@ -10,7 +10,7 @@ type typ =
     Int | Bool | Void | Char | Str | Float 
   | NodeTyp of string 
   | GraphTyp of string
-  | ListTyp of string
+  | ListTyp of typ
   | TupleTyp of string
 
 type bind = typ * string
@@ -95,17 +95,17 @@ type program = bind list * tuple_decl list * node_decl list * func_decl list
 
 (* Pretty-printing functions *)
 
-let string_of_typ = function
+let rec string_of_typ = function
     Int            -> "int"
   | Bool           -> "bool"
   | Void           -> "void"
   | Char           -> "char"
   | Str            -> "string"
   | Float          -> "float"
-  | NodeTyp(name)  -> "node"
-  | GraphTyp(name) -> "graph"
-  | ListTyp(name)  -> "list"
-  | TupleTyp(name) -> "tuple"
+  | NodeTyp(name)  -> name
+  | GraphTyp(name) -> name
+  | ListTyp(name)  -> string_of_typ name
+  | TupleTyp(name) -> name
 
 let string_of_op = function
     Add       -> "+"
