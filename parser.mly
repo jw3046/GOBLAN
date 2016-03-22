@@ -137,7 +137,7 @@ expr_opt:
   | expr                               { $1 }
 
 expr:
-    expr PERIOD  expr                  { Member($1, $3) }
+    expr PERIOD  ID                    { Member($1, $3) }
   | TRUE                               { BoolLit(true) }
   | FALSE                              { BoolLit(false) }
   | SELF                               { Self }
