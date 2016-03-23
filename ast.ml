@@ -170,22 +170,16 @@ let rec string_of_expr = function
 
 let rec string_of_stmt = function
     Expr(e)
-      -> string_of_expr e ^ ";\n"
+      -> string_of_expr e ^ ";"
   | Block(stmts)
-      -> "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
+      -> "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}"
   | ReturnNoExpr
       -> "return;"
   | Return(expr)
-      -> "return " ^ string_of_expr expr ^ ";\n"
+      -> "return " ^ string_of_expr expr ^ ";"
   | If(e, s1, s2)
       -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^
          "else\n" ^ string_of_stmt s2
-  (*
-  | If(e1, e2, s1, s2, s3)
-      -> "if (" ^ string_of_expr e1 ^ ")\n" ^ string_of_stmt s1 ^
-         "elif (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s2 ^
-         "else\n" ^ string_of_stmt s3
-  *)
   | For(e1, e2, e3, s)
       -> "for (" ^ string_of_expr e1  ^ "; " ^ string_of_expr e2 ^ "; " ^
          string_of_expr e3  ^ ")\n" ^ string_of_stmt s
@@ -200,27 +194,24 @@ let rec string_of_stmt = function
       -> "continue;"
   | Pass (e1, e2)
       -> "Pass (" ^ string_of_expr e1 ^ ")\n" ^ string_of_expr e2
-  (*
-  | Run (e1, e2)
-      -> "Run " ^ string_of_expr e1 ^ " ( " ^ string_of_list e2 ^ " ) "*)
  
 let string_of_v_decl (v_decl_typ, v_decl_id) = 
   string_of_typ v_decl_typ ^ " " ^ v_decl_id
 
 let string_of_formals formals =
-  String.concat "\n" (List.map string_of_v_decl formals)
+  String.concat ", " (List.map string_of_v_decl formals)
 
 let string_of_locals locals = 
-  String.concat "\n" (List.map string_of_v_decl locals)
+  String.concat ";\n  " (List.map string_of_v_decl locals)
 
 let string_of_body body =
-  String.concat "\n" (List.map string_of_stmt body)
+  String.concat "\n  " (List.map string_of_stmt body)
 
 let string_of_f_decl f_decl =
   string_of_typ f_decl.typ ^ " " ^ f_decl.fname ^
-    "(" ^ string_of_formals f_decl.formals ^ ")\n" ^
-    string_of_locals f_decl.locals ^ "\n" ^
-    string_of_body f_decl.body
+    "(" ^ string_of_formals f_decl.formals ^ ") {\n  " ^
+    string_of_locals f_decl.locals ^ ";\n  " ^
+    string_of_body f_decl.body ^ "\n}"
 
 let string_of_data ndata =
   String.concat "\n" (List.map string_of_v_decl ndata.attributes)
@@ -231,13 +222,6 @@ let string_of_do (ndo : n_do) =
   string_of_locals ndo.locals ^ "\n" ^
   string_of_body ndo.body
 
-(*
-let string_of_do ndo =
-  string_of_typ ndo.typ ^ "\n" ^
-  String.concat "\n" (List.map string_of_v_decl ndo.formals) ^ "\n" ^
-  String.concat "\n" (List.map string_of_v_decl ndo.locals) ^ "\n" ^
-  String.concat "\n" (List.map string_of_stmt ndo.body)
-*)
 let string_of_catch (ncatch : n_catch) =
   string_of_locals ncatch.locals ^ "\n" ^
   string_of_body ncatch.body
@@ -255,7 +239,7 @@ let string_of_attributes attr =
   String.concat "\n" (List.map string_of_bind_list attr)
 
 let string_of_t_decl (t_decl : tuple_decl) =
-  t_decl.typ ^ " " ^ string_of_attributes t_decl.attributes
+  t_decl.typ ^ "\n" ^ string_of_attributes t_decl.attributes
 
 let string_of_program (vars, tuples, nodes, funcs) =
   String.concat "\n" (List.map string_of_v_decl vars)  ^ "\n" ^
