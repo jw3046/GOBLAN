@@ -2,7 +2,7 @@
 
 { open Parser }
 
-let exp = ('e'|'E')('+'|'-')?[0-9]+;
+let exp = ('e'|'E')('+'|'-')?['0'-'9']+;
 
 rule token = parse
   [' ' '\t' '\r' '\n']                 { token lexbuf }     (* Whitespace *)
