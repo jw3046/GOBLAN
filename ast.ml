@@ -25,9 +25,9 @@ type expr =
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of expr * expr
-  | Tuple of typ * expr list
-  | Node of typ * expr list
-  | Graph of typ * expr * expr
+  | Tuple of string * expr list
+  | Node of string * expr list
+  | Graph of string * expr * expr
   | Lst of typ * expr list
   | Call of string * expr list
   | Run of expr * bind list
@@ -146,11 +146,11 @@ let rec string_of_expr = function
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | Assign(e1, e2) -> string_of_expr e1 ^ " = " ^ string_of_expr e2
-  | Tuple(typ, el) -> string_of_typ typ ^ " " ^
+  | Tuple(typ, el) -> typ ^ " " ^
       String.concat "\n" (List.map string_of_expr el)
-  | Node(typ, el) -> string_of_typ typ ^ " " ^
+  | Node(typ, el) -> typ ^ " " ^
       String.concat "\n" (List.map string_of_expr el)
-  | Graph(typ, e1, e2) -> string_of_typ typ ^ "\n" ^ string_of_expr e1 ^ "\n" ^
+  | Graph(typ, e1, e2) -> typ ^ "\n" ^ string_of_expr e1 ^ "\n" ^
       string_of_expr e2
   | Lst(typ, el) -> string_of_typ typ ^ " " ^
       String.concat "\n" (List.map string_of_expr el)
