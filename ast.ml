@@ -30,7 +30,7 @@ type expr =
   | Graph of string * expr * expr
   | Lst of typ * expr list
   | Call of string * expr list
-  | Run of expr * bind list
+  | Run of expr * expr list
   | ListAdd of expr * expr
   | ListRemove of expr * expr
   | Neighbors
@@ -156,7 +156,7 @@ let rec string_of_expr = function
       String.concat "\n" (List.map string_of_expr el)
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | Run(e, bl) -> string_of_expr e ^ " " ^ String.concat "\n" (List.map string_of_bind_list bl)
+  | Run(e, bl) -> string_of_expr e ^ " " ^ String.concat "\n" (List.map string_of_expr bl)
   | ListAdd(e1, e2) -> string_of_expr e1 ^ " " ^ string_of_expr e2
   | ListRemove(e1, e2) -> string_of_expr e1 ^ " " ^ string_of_expr e2
   | Neighbors -> "neighbors"
