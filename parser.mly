@@ -34,7 +34,7 @@ let get4 (_,_,_,a) = a;;
 %left TIMES FTIMES DIVIDE FDIVIDE MODULO
 %left NOT NEG
 %left PERIOD
-%nonassoc LBRACKET RBRACKET
+%nonassoc LBRACKET
 
 %start program
 %type <Ast.program> program
