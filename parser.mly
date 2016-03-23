@@ -2,28 +2,30 @@
 
 %{
 open Ast;;
+let parse_error s = (* Called by the parser function on error *)
+  print_endline s;
+  flush stdout;;
 let get1 (a,_,_,_) = a;;
 let get2 (_,a,_,_) = a;;
 let get3 (_,_,a,_) = a;;
 let get4 (_,_,_,a) = a;;
 %}
 
-%token LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET SEMI COMMA PERIOD
-%token PLUS MINUS TIMES DIVIDE MODULO FPLUS FMINUS FTIMES FDIVIDE
+%token LPAREN RPAREN LBRACE RBRACE LLIST RLIST LBRACKET RBRACKET
+%token SEMI COMMA PERIOD PLUS MINUS TIMES DIVIDE MODULO FPLUS FMINUS FTIMES FDIVIDE
 %token ASSIGN EQ NEQ REQ RNEQ LT LEQ GT GEQ AND OR NOT ARROW
 %token IF ELSE FOR IN WHILE BREAK CONTINUE RETURN
-%token BOOL INT FLOAT CHAR STRING LIST GRAPH NEW VOID
+%token BOOL INT FLOAT STRING LIST GRAPH NEW VOID
 %token TRUE FALSE DATA DO CATCH SELF PARENT CHILD NEIGHBORS MESSAGE
-%token PASS ADD TO REMOVE FROM RUN NULL INFINITY
+%token PASS RUN NULL INFINITY
 %token <string> ID
 %token <float>  FLT_LIT
 %token <int>    INT_LIT
-%token <string> STR_LIT CHR_LIT
+%token <string> STR_LIT
 %token <string> NODE_TYP TUPLE_TYP
 %token EOF
 
 %right ASSIGN
-%right TO FROM
 %left OR
 %left AND
 %left EQ NEQ REQ RNEQ
@@ -32,6 +34,7 @@ let get4 (_,_,_,a) = a;;
 %left TIMES FTIMES DIVIDE FDIVIDE MODULO
 %left NOT NEG
 %left PERIOD
+%nonassoc LBRACKET
 
 %start program
 %type <Ast.program> program
@@ -84,9 +87,10 @@ n_do:
                                            body = List.rev $8 } }
 
 n_catch:
-   CATCH LBRACE vdecl_list stmt_list RBRACE
-                                       { { locals = $3;
-                                           body = $4 } }
+   CATCH LPAREN NODE_TYP RPAREN LBRACE vdecl_list stmt_list RBRACE
+                                       { { msg_typ = $3;
+                                           locals = $6;
+                                           body = $7 } }
 
 tdecl:
     TUPLE_TYP LBRACE vdecl_list RBRACE { { typ = $1;
@@ -176,12 +180,11 @@ expr:
                                        { Node($2, $4) }
   | NEW NODE_TYP GRAPH LPAREN expr COMMA expr RPAREN
                                        { Graph($2, $5, $7) }
-  | NEW typ LBRACKET actuals_opt RBRACKET
+  | NEW typ LLIST actuals_opt RLIST
                                        { Lst($2, $4) }
   | RUN LBRACE expr RBRACE LPAREN actuals_opt RPAREN 
                                        { Run ($3,$6) }
-  | ADD expr TO expr                   { ListAdd($2, $4) }
-  | REMOVE expr FROM expr              { ListRemove($2, $4) }
+  | expr LBRACKET expr RBRACKET        { Subscript($1, $3) }
   | ID LPAREN actuals_opt RPAREN       { Call($1, $3) }
   | LPAREN expr RPAREN                 { $2 }
   | NULL                               { Null }
