@@ -56,8 +56,6 @@ rule token = parse
 | "char"                               { CHAR }
 | "string"                             { STRING }
 | "list"                               { LIST }
-| "tuple"                              { TUPLE }
-| "node"                               { NODE }
 | "graph"                              { GRAPH }
 | "new"                                { NEW }
 | "void"                               { VOID }
