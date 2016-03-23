@@ -21,6 +21,7 @@ type expr =
   | BoolLit of bool
   | StrLit of string
   | FloatLit of float
+  | ChrLit of char
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -142,6 +143,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | StrLit(s) -> s
   | FloatLit(f) -> string_of_float f
+  | ChrLit(c) -> c
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
@@ -181,8 +183,6 @@ let rec string_of_stmt = function
   | If(e, s1, s2)
       -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^
          "else\n" ^ string_of_stmt s2
-  (*)
-       *)
   (*
   | If(e1, e2, s1, s2, s3)
       -> "if (" ^ string_of_expr e1 ^ ")\n" ^ string_of_stmt s1 ^
