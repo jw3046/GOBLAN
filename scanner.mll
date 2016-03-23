@@ -43,7 +43,6 @@ rule token = parse
 | "!"                                  { NOT }
 | "->"                                 { ARROW }
 | "if"                                 { IF }
-| "elif"                               { ELIF }
 | "else"                               { ELSE }
 | "for"                                { FOR }
 | "in"                                 { IN }
@@ -85,7 +84,8 @@ rule token = parse
 | ('.'['0'-'9']+ exp?|['0'-'9']+('.'['0'-'9']* exp? | exp)) as lxm
                                        { FLT_LIT(float_of_string lxm) }
 | ['0'-'9']+ as lxm                    { INT_LIT(int_of_string lxm) }
-| '"'(_|"\\\"")*'"'                    { let str = lexeme lexbuf in STR_LIT(String.sub str 1 ((String.length str) - 2))
+| '"'(_|"\\\"")*'"'                    { let str = lexeme lexbuf 
+  in STR_LIT(String.sub str 1 ((String.length str) - 2))}
 | "node:"['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
                                        { NODE_TYP(lxm) }
 | "tuple:"['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
