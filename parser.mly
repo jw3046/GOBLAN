@@ -59,7 +59,6 @@ typ:
     INT                                { Int }
   | BOOL                               { Bool }
   | VOID                               { Void }
-  | CHAR                               { Char }
   | STRING                             { Str }
   | FLOAT                              { Float }
   | NODE_TYP                           { NodeTyp($1) }
@@ -149,16 +148,15 @@ expr:
   | FLT_LIT                            { FloatLit($1) }
   | INT_LIT                            { IntLit($1) }
   | STR_LIT                            { StrLit($1) }
-  | CHR_LIT                            { ChrLit($1) }
   | expr PLUS    expr                  { Binop($1, Add, $3) }
   | expr MINUS   expr                  { Binop($1, Sub, $3) }
   | expr TIMES   expr                  { Binop($1, Mult, $3) }
   | expr DIVIDE  expr                  { Binop($1, Div, $3) }
   | expr MODULO  expr                  { Binop($1, Mod, $3) }
   | expr FPLUS   expr                  { Binop($1, FAdd, $3) }
-  | expr FMINUS  expr                  { Binop($1, FMinus, $3) }
-  | expr FTIMES  expr                  { Binop($1, FTimes, $3) }
-  | expr FDIVIDE expr                  { Binop($1, FDivide, $3) }
+  | expr FMINUS  expr                  { Binop($1, FSub, $3) }
+  | expr FTIMES  expr                  { Binop($1, FMult, $3) }
+  | expr FDIVIDE expr                  { Binop($1, FDiv, $3) }
   | expr EQ      expr                  { Binop($1, Equal, $3) }
   | expr NEQ     expr                  { Binop($1, NEqual, $3) }
   | expr REQ     expr                  { Binop($1, RefEqual, $3) }

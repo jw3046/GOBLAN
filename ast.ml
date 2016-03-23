@@ -7,7 +7,7 @@ type op = Add | Sub | Mult | Div | Mod | FAdd | FSub | FMult | FDiv |
 type uop = Neg | Not
 
 type typ = 
-    Int | Bool | Void | Char | Str | Float 
+    Int | Bool | Void | Str | Float 
   | NodeTyp of string 
   | GraphTyp of string
   | ListTyp of typ
@@ -21,7 +21,6 @@ type expr =
   | BoolLit of bool
   | StrLit of string
   | FloatLit of float
-  | ChrLit of char
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -100,7 +99,6 @@ let rec string_of_typ = function
     Int            -> "int"
   | Bool           -> "bool"
   | Void           -> "void"
-  | Char           -> "char"
   | Str            -> "string"
   | Float          -> "float"
   | NodeTyp(name)  -> name
@@ -143,7 +141,6 @@ let rec string_of_expr = function
   | BoolLit(false) -> "false"
   | StrLit(s) -> s
   | FloatLit(f) -> string_of_float f
-  | ChrLit(c) -> c
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2

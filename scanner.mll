@@ -86,15 +86,6 @@ rule token = parse
 | '"'[_|"\\\""]*'"'                    { let string = Lexing.lexeme lexbuf in
                                          STR_LIT(String.sub string 1 (
                                          (String.length string) - 2))
-                                       }
-| "'"[(' ' - '&')|('(' - '~')]"'"      { let char = Lexing.lexeme lexbuf in
-                                         CHR_LIT(String.sub char 1 (
-                                         (String.length char) - 2))
-                                       }
-| "'\\"['n' 'r' 't']"'"                { let char = Lexing.lexeme lexbuf in
-                                         CHR_LIT(String.sub char 1 (
-                                         (String.length char) - 2))
-                                       }
 | "node:"['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
                                        { NODE_TYP(lxm) }
 | "tuple:"['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
