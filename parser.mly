@@ -122,11 +122,11 @@ stmt:
                                        { If($3, $6, Block([])) }
   | IF LPAREN expr RPAREN LBRACE stmt RBRACE ELSE LBRACE stmt RBRACE
                                        { If($3, $6, $10) }
-  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt_list RBRACE
+  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt RBRACE
                                        { For($3, $5, $7, $10) }
-  | FOR LPAREN expr IN expr RPAREN LBRACE stmt_list RBRACE
+  | FOR LPAREN expr IN expr RPAREN LBRACE stmt RBRACE
                                        { ForEach($3, $5, $8)}
-  | WHILE LPAREN expr RPAREN LBRACE stmt_list RBRACE
+  | WHILE LPAREN expr RPAREN LBRACE stmt RBRACE
                                        { While($3, $6) }
   | BREAK SEMI                         { Break }
   | CONTINUE SEMI                      { Continue }
