@@ -47,7 +47,7 @@ type stmt =
   | Expr of expr
   | ReturnNoExpr
   | Return of expr
-  | If of expr * stmt list * stmt list
+  | If of expr * stmt * stmt 
   | For of expr * expr * expr * stmt
   | ForEach of expr * expr * stmt
   | While of expr * stmt
@@ -179,8 +179,10 @@ let rec string_of_stmt = function
   | Return(expr)
       -> "return " ^ string_of_expr expr ^ ";\n"
   | If(e, s1, s2)
-      -> "if (" ^ string_of_expr e ^ ")\n" ^  String.concat "" (List.map string_of_stmt s1) ^
-         "else\n" ^  String.concat "" (List.map string_of_stmt s2) 
+      -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^
+         "else\n" ^ string_of_stmt s2
+  (*)
+       *)
   (*
   | If(e1, e2, s1, s2, s3)
       -> "if (" ^ string_of_expr e1 ^ ")\n" ^ string_of_stmt s1 ^
