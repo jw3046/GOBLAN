@@ -29,10 +29,9 @@ type expr =
   | Node of string * expr list
   | Graph of string * expr * expr
   | Lst of typ * expr list
+  | Subscript of expr * expr
   | Call of string * expr list
   | Run of expr * expr list
-  | ListAdd of expr * expr
-  | ListRemove of expr * expr
   | Neighbors
   | Parent
   | Child
@@ -72,6 +71,7 @@ type n_do = {
   }
 
 type n_catch = {
+    msg_typ : string;
     locals : bind list;
     body : stmt list;
   }
@@ -157,8 +157,7 @@ let rec string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Run(e, bl) -> string_of_expr e ^ " " ^ String.concat "\n" (List.map string_of_expr bl)
-  | ListAdd(e1, e2) -> string_of_expr e1 ^ " " ^ string_of_expr e2
-  | ListRemove(e1, e2) -> string_of_expr e1 ^ " " ^ string_of_expr e2
+  | Subscript(e1, e2) -> string_of_expr e1 ^ "[" ^ string_of_expr e2 ^ "]\n"
   | Neighbors -> "neighbors"
   | Parent -> "parent"
   | Child -> "child"
@@ -223,6 +222,7 @@ let string_of_do (ndo : n_do) =
   string_of_body ndo.body
 
 let string_of_catch (ncatch : n_catch) =
+  ncatch.msg_typ ^ 
   string_of_locals ncatch.locals ^ "\n" ^
   string_of_body ncatch.body
 
