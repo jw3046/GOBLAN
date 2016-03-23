@@ -37,7 +37,7 @@ type expr =
   | Parent
   | Child
   | Self
-  | Mssage
+  | Message
   | Null
   | Infinity
   | Noexpr
@@ -164,7 +164,7 @@ let rec string_of_expr = function
   | Parent -> "parent"
   | Child -> "child"
   | Self -> "self"
-  | Mssage -> "message"
+  | Message -> "message"
   | Null -> "null"
   | Infinity -> "infinity"
   | Noexpr -> ""
