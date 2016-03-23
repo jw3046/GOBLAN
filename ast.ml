@@ -257,7 +257,7 @@ let string_of_attributes attr =
 let string_of_t_decl (t_decl : tuple_decl) =
   t_decl.typ ^ " " ^ string_of_attributes t_decl.attributes
 
-let string_of_program (vars, funcs, nodes, tuples) =
+let string_of_program (vars, tuples, nodes, funcs) =
   String.concat "\n" (List.map string_of_v_decl vars)  ^ "\n" ^
   String.concat "\n" (List.map string_of_f_decl funcs) ^ "\n" ^
   String.concat "\n" (List.map string_of_n_decl nodes) ^ "\n" ^
