@@ -15,6 +15,8 @@ rule token = parse
 | ')'                                  { RPAREN }
 | '{'                                  { LBRACE }
 | '}'                                  { RBRACE }
+| "[|"                                 { LLIST }
+| "|]"                                 { RLIST }
 | '['                                  { LBRACKET }
 | ']'                                  { RBRACKET }
 | ';'                                  { SEMI }
@@ -53,7 +55,6 @@ rule token = parse
 | "bool"                               { BOOL }
 | "int"                                { INT }
 | "float"                              { FLOAT }
-| "char"                               { CHAR }
 | "string"                             { STRING }
 | "list"                               { LIST }
 | "graph"                              { GRAPH }
@@ -70,10 +71,6 @@ rule token = parse
 | "neighbors"                          { NEIGHBORS }
 | "message"                            { MESSAGE }
 | "pass"                               { PASS }
-| "add"                                { ADD }
-| "to"                                 { TO }
-| "remove"                             { REMOVE }
-| "from"                               { FROM }
 | "run"                                { RUN }
 | "null"                               { NULL }
 | "infinity"                           { INFINITY }

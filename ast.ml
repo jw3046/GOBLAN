@@ -157,7 +157,7 @@ let rec string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Run(e, bl) -> string_of_expr e ^ " " ^ String.concat "\n" (List.map string_of_expr bl)
-  | Subscript(e1, e2) -> string_of_expr e1 ^ "[" ^ string_of_expr e2 ^ "]\n"
+  | Subscript(e1, e2) -> string_of_expr e1 ^ "[\n" ^ string_of_expr e2 ^ "\n]\n"
   | Neighbors -> "neighbors"
   | Parent -> "parent"
   | Child -> "child"
@@ -177,10 +177,10 @@ let rec string_of_stmt = function
   | Return(expr)
       -> "return " ^ string_of_expr expr ^ ";"
   | If(e, s1, s2)
-      -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^
-         "else\n" ^ string_of_stmt s2
+      -> "if (\n" ^ string_of_expr e ^ "\n)\n" ^ string_of_stmt s1 ^
+         "\nelse\n" ^ string_of_stmt s2
   | For(e1, e2, e3, s)
-      -> "for (" ^ string_of_expr e1  ^ "; " ^ string_of_expr e2 ^ "; " ^
+      -> "for\n(" ^ string_of_expr e1  ^ "; " ^ string_of_expr e2 ^ "; " ^
          string_of_expr e3  ^ ")\n" ^ string_of_stmt s
   | ForEach(e1, e2, s)
       -> "for (" ^ string_of_expr e1 ^ " " ^ string_of_expr e2 ^ ")\n" ^

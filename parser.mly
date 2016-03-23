@@ -25,16 +25,18 @@ let get4 (_,_,_,a) = a;;
 %token <string> NODE_TYP TUPLE_TYP
 %token EOF
 
+%nonassoc NOELSE
+%nonassoc ELSE
 %right ASSIGN
 %left OR
 %left AND
 %left EQ NEQ REQ RNEQ
 %left LT GT LEQ GEQ
+%nonassoc LBRACKET
 %left PLUS FPLUS MINUS FMINUS
 %left TIMES FTIMES DIVIDE FDIVIDE MODULO
 %left NOT NEG
 %left PERIOD
-%nonassoc LBRACKET
 
 %start program
 %type <Ast.program> program
@@ -87,7 +89,7 @@ n_do:
                                            body = List.rev $8 } }
 
 n_catch:
-   CATCH LPAREN NODE_TYP RPAREN LBRACE vdecl_list stmt_list RBRACE
+   CATCH LPAREN TUPLE_TYP RPAREN LBRACE vdecl_list stmt_list RBRACE
                                        { { msg_typ = $3;
                                            locals = $6;
                                            body = $7 } }
@@ -121,10 +123,10 @@ stmt:
   | LBRACE stmt_list RBRACE            { Block(List.rev $2) }
   | RETURN SEMI                        { ReturnNoExpr }
   | RETURN expr SEMI                   { Return $2 }
-  | IF LPAREN expr RPAREN LBRACE stmt RBRACE
-                                       { If($3, $6, Block([])) }
-  | IF LPAREN expr RPAREN LBRACE stmt RBRACE ELSE LBRACE stmt RBRACE
-                                       { If($3, $6, $10) }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE
+                                       { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt 
+                                       { If($3, $5, $7) }
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN LBRACE stmt RBRACE
                                        { For($3, $5, $7, $10) }
   | FOR LPAREN expr IN expr RPAREN LBRACE stmt RBRACE
